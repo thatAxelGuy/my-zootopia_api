@@ -1,9 +1,8 @@
 """My Zootopia"""
 
-
 import data_fetcher
 
-#ANIMALS_DATA_PATH = "animals_data.json"
+# ANIMALS_DATA_PATH = "animals_data.json"
 ANIMALS_TEMPLATE_PATH = "animals_template.html"
 OUTPUT_PATH = "animals.html"
 ENABLE_SKIN_TYPE_FILTER = False
@@ -27,7 +26,7 @@ def serialize_animal(animal: dict) -> str:
     if characteristics.get("diet") is not None:
         out += (
             f'<li class="animal-detail"><strong>Diet:</strong> '
-            f'{characteristics["diet"]}</li>\n'
+            f"{characteristics['diet']}</li>\n"
         )
 
     if locations:
@@ -39,7 +38,7 @@ def serialize_animal(animal: dict) -> str:
     if characteristics.get("type") is not None:
         out += (
             f'<li class="animal-detail"><strong>Type:</strong> '
-            f'{characteristics["type"]}</li>\n'
+            f"{characteristics['type']}</li>\n"
         )
 
     out += "</ul>"
@@ -59,19 +58,19 @@ def get_skin_types(animals_data: list[dict]) -> set[str]:
 
 
 def create_animals_html(
-    animals_data: list[dict],
-    template: str,
-    selected_skin_type: str,
+    animals_data: list[dict], template: str, selected_skin_type: str, animal_name: str
 ) -> str:
     """Create final HTML content."""
     output = ""
+    if not animals_data:
+        output = f'<p>No animals found for "{animal_name}".</p>'
+    else:
+        for animal in animals_data:
+            skin_type = animal["characteristics"].get("skin_type")
 
-    for animal in animals_data:
-        skin_type = animal["characteristics"].get("skin_type")
-
-        if skin_type != selected_skin_type and selected_skin_type != "All":
-            continue
-        output += serialize_animal(animal)
+            if skin_type != selected_skin_type and selected_skin_type != "All":
+                continue
+            output += serialize_animal(animal)
 
     return template.replace(
         "__REPLACE_ANIMALS_INFO__",
@@ -85,9 +84,7 @@ def load_template(template_path: str) -> str:
         with open(template_path, encoding="utf-8") as file:
             template = file.read()
     except FileNotFoundError as error:
-        raise FileNotFoundError(
-            f"Template file not found: {template_path}"
-        ) from error
+        raise FileNotFoundError(f"Template file not found: {template_path}") from error
 
     return template
 
@@ -137,6 +134,7 @@ def main() -> None:
         animals_data,
         template,
         selected_skin_type,
+        animal_name
     )
 
     save_html(OUTPUT_PATH, final_html)
