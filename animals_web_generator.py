@@ -124,7 +124,7 @@ def prompt_skin_type(skin_types: set[str]) -> str:
 
 def main() -> None:
     """Run the Zootopia application."""
-    animal_name = "Fox"
+    animal_name = input("Enter a name of an animal: ").strip()
     animals_data = data_fetcher.fetch_data(animal_name)
     if ENABLE_SKIN_TYPE_FILTER:
         skin_types = get_skin_types(animals_data)
