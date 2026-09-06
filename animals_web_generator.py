@@ -1,25 +1,12 @@
 """My Zootopia"""
 
-import json
 
-ANIMALS_DATA_PATH = "animals_data.json"
+import data_fetcher
+
+#ANIMALS_DATA_PATH = "animals_data.json"
 ANIMALS_TEMPLATE_PATH = "animals_template.html"
-OUTPUT_PATH = "animals_output.html"
-
-
-def load_data(filepath: str) -> list[dict]:
-    """Load data from JSON file."""
-    try:
-        with open(filepath, "r", encoding="utf-8") as file:
-            return json.load(file)
-    except FileNotFoundError as error:
-        raise FileNotFoundError(f"File not found: {filepath}") from error
-    except json.JSONDecodeError as error:
-        raise json.JSONDecodeError(
-            f"Invalid JSON in file: {filepath}",
-            error.doc,
-            error.pos,
-        ) from error
+OUTPUT_PATH = "animals.html"
+ENABLE_SKIN_TYPE_FILTER = False
 
 
 def serialize_animal(animal: dict) -> str:
@@ -95,7 +82,7 @@ def create_animals_html(
 def load_template(template_path: str) -> str:
     """Load HTML template from file."""
     try:
-        with open(template_path, "r", encoding="utf-8") as file:
+        with open(template_path, encoding="utf-8") as file:
             template = file.read()
     except FileNotFoundError as error:
         raise FileNotFoundError(
@@ -114,6 +101,7 @@ def save_html(filepath: str, final_html: str) -> None:
             encoding="utf-8",
         ) as file:
             file.write(final_html)
+            print(f"Website was successfully generated to the file {OUTPUT_PATH}.")
     except OSError as error:
         raise OSError(f"Could not write output file: {filepath}") from error
 
@@ -136,10 +124,13 @@ def prompt_skin_type(skin_types: set[str]) -> str:
 
 def main() -> None:
     """Run the Zootopia application."""
-    animals_data = load_data(ANIMALS_DATA_PATH)
-    skin_types = get_skin_types(animals_data)
-
-    selected_skin_type = prompt_skin_type(skin_types)
+    animal_name = "Fox"
+    animals_data = data_fetcher.fetch_data(animal_name)
+    if ENABLE_SKIN_TYPE_FILTER:
+        skin_types = get_skin_types(animals_data)
+        selected_skin_type = prompt_skin_type(skin_types)
+    else:
+        selected_skin_type = "All"
 
     template = load_template(ANIMALS_TEMPLATE_PATH)
     final_html = create_animals_html(
