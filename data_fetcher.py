@@ -9,7 +9,7 @@ load_dotenv()
 API_KEY = os.getenv("API_KEY")
 
 
-def fetch_data(animal_name) -> list[dict[str, object]]:
+def fetch_data(animal_name: str) -> list[dict[str, object]]:
     """
     Fetches the animals data for the animal 'animal_name'.
     Returns: a list of animals, each animal is a dictionary:
