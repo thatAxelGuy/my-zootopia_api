@@ -6,7 +6,9 @@ import requests
 from dotenv import load_dotenv
 
 load_dotenv()
-
+API_KEY = os.getenv("API_KEY")
+if API_KEY is None:
+        raise ValueError("API_KEY is not set in the .env file")
 
 def fetch_data(animal_name: str) -> list[dict[str, object]]:
     """
@@ -25,12 +27,9 @@ def fetch_data(animal_name: str) -> list[dict[str, object]]:
       }
     },
     """
-    api_key = os.getenv("API_KEY")
-    if api_key is None:
-        raise ValueError("API_KEY is not set in the .env file")
     response = requests.get(
         f"https://api.api-ninjas.com/v1/animals?name={animal_name}",
-        headers={"X-Api-Key": api_key},
+        headers={"X-Api-Key": API_KEY},
     )
     if response.status_code == 200:
         return response.json()
